@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>list</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <%- include('Anav.ejs') %>
+<div class="list-container">
+    <div role="search" class="search-con">
+        <input class="list-search" type=“search” placeholder="Search" aria-label="search" id="search" required>
+        <button class="search-send"><i class="fas fa-search"></i></button> 
+    </div>
+    <div class="white-bg row-col-lg-6">
+        <% if(result.length === 0){%>
+            <p style="text-align: center;">검색 결과가 없습니다</p>
+        <%}else{
+            let 정렬=result.sort((a,b)=>{return b.count-a.count})
+            for (let i of 정렬){%>
+              <div class="list-box">
+                <div class="list-link"><a href="/detail/<%= i._id %>"><%= i.title %></a><p><%= i.username %></p></div>
+                <p class="date"><%= i.date %></p>
+              </div>
+          <%}}%>
+    </div>
+    <div class="list-button">
+    <% for(let i = 0; i < 개수/12; i++){%>
+        <% if(search==0){%>
+        <a href="/list/<%=i+1%>"><%=i+1%></a>
+        <%}else{%>
+        <a href="/list/search?val=<%=search%>&p=<%=i+1%>"><%=i+1%></a>
+        <%}%>
+    <%}%>
+    </div>
+</div>
+<script>
+    document.querySelector('.list-search').addEventListener('click', function(){
+        document.querySelector('.list-search').style.width = '17.5rem'
+    })
+    document.querySelector('.search-send').addEventListener('click', function(){
+        let 입력한거 = document.querySelector('#search').value
+        location.href = '/list/search?val=' + 입력한거 + '&p=1'
+    })
+</script>
+</body>
+</html>

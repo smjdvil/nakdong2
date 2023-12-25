@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mypage</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <%- include('Anav.ejs') %>
+    <div class="set-black-bg d-none">
+        <div class="account-delete">
+
+        </div>
+    </div>
+    <div class="setting-container">
+        <h1>설정</h1>
+    </div>
+    <button type="button" id="btn">계정 삭제</button>
+<script>
+    const btn = document.getElementById('btn')
+    btn.addEventListener('click',function(){
+        $('.set-black-bg').removeClass('d-none')
+    })
+    $('.set-black-bg').click((e)=>{
+    if(e.target == document.querySelector('.set-black-bg')){
+        setTimeout(() => {
+            $('.set-black-bg').addClass('d-none')
+        }, 1);
+    }
+    })
+</script>
+</body>
+</html>

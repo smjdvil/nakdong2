@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-sm-container">
+            <form action="/login" method="POST" autocomplete="off">
+                <h2>로그인</h2>
+                <div class="Tologin">
+                    <label for="username">아이디</label>
+                    <input name="username" placeholder="아이디" id="username" required>
+                </div>
+                <div class="Tologin">
+                    <label for="password">비밀번호</label>
+                    <input name="password" type="password" placeholder="비밀번호" type="text" id="password" required>
+                </div>
+                <div class="login-submit">
+                    <div class="login-information">
+                        <div class="login-information-after">로그인</div>
+                    </div>
+                    <button type="submit" id="btn">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+    const btn = document.getElementById('btn')
+    btn.disabled = true
+    let 닉네임 = '';
+    let 비번 = '';
+    function check() {
+        if(닉네임 != '' && 비번 != '' && 비번.length>=8){
+            btn.disabled = false
+        }else{btn.disabled = true}
+    }
+    $('#username').change((event)=>{
+        닉네임 = event.target.value
+        check()
+    })
+    $('#password').change((event)=>{
+        비번 = event.target.value
+        check()
+    })
+    let 쿠키값 = ('; '+document.cookie).split(`; mode=`).pop().split(';')[0]
+    function 쿠키확인(params) {
+        if (쿠키값 == '') {
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else if(쿠키값 == 'light'){
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else{
+            $('.flip-inner').css({'transform' : 'rotateY(180deg)'})
+            document.cookie = 'mode=dark;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'dark');
+        }
+    }
+    쿠키확인()
+    </script>
+</body>
+</html>

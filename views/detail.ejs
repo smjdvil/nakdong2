@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>detail</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <%- include('Anav.ejs') %>
+    <div class="detail-container">
+        <ul class="detail-list">
+            <li class="detail-item-title">
+                <p><%= result.title %></p>
+            </li>
+            <li class="detail-item">
+                <div class="detail-info">
+                    <% if(user == undefined){%>
+                        <p class="pb-2"><%= result.username %></p>
+                    <%}else if(user._id.equals(result.user_id)){%>
+                        <p class="pb-2"><%= result.username %></p>
+                    <%}else{%>
+                        <p class="pb-2"><%= result.username %></p><a href="/chat/request?writerId=<%= result.user_id %>" id="chat" class="pb-2">채팅하기</a>
+                    <%}%>
+                    <p class="date"><%= result.date %></p>
+                </div>
+                    <% if(user == undefined){%>
+                    <%}else if(user._id.equals(result.user_id)){%>
+                        <div class="detail-item-delete">
+                            <div class="detail-information-delete">
+                                <div class="detail-information-after">삭제</div>
+                            </div>
+                            <form action="/doc/<%= result._id %>?_method=delete" method="POST" autocomplete="off" name="delete">
+                                <span onclick="document.forms['delete'].submit()" id="delete"><i class="fa-solid fa-trash"></i></span>
+                            </form>
+                        </div>
+                        <div class="detail-item-edit">
+                            <div class="detail-information-edit">
+                                <div class="detail-information-after">수정</div>
+                            </div>
+                            <a href="/edit/<%= result._id %>"><i class="fa-solid fa-pen-to-square"></i></a>
+                        </div>
+                    <%}%>
+            </li>
+        </ul>
+        
+        <div class="detail-content">
+        </div>
+        <% if(user == undefined){%>
+            <div class="detail-comment">
+                <input placeholder="로그인 하세요" name="comment" id="comment" type="text" required disabled>
+            </div>
+        <%}else{%>
+        <div class="detail-comment">
+            <input placeholder="댓글 추가..." name="comment" id="comment" type="text" required>
+            <button id="cansle">취소</button>
+            <button type="submit" id="btn">댓글</button>
+        </div>
+        <%}%>
+        <div class="comment-container">
+            <% for (let i = 0; i < comment.length; i++){%>
+                <div class="comment-content row">
+                    <p class="col-2"><%= comment[i].username %></p>
+                    <p class="col-7"><%= comment[i].comment %></p>
+                    <p class="right col-3" style="text-align: end;"><%= comment[i].date %></p>
+                </div>
+             <% } %>
+        </div>
+    </div>
+<script>
+    function decodeHTMLEntities (str) {
+    if(str !== undefined && str !== null && str !== '') {
+            str = String(str);
+
+            str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+            str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+            var element = document.createElement('div');
+            element.innerHTML = str;
+            str = element.textContent;
+            element.textContent = '';
+        }
+        return str;
+    }
+    $('.detail-content').append(decodeHTMLEntities('<%= result.content %>'))
+</script>
+<script>
+    const btn = document.getElementById('btn')
+    const cansle = document.getElementById('cansle')
+    const comment = document.getElementById('comment')
+    const chat = document.getElementById('chat')
+    btn.disabled = true
+    let 댓글;
+    $('#comment').change((event)=>{
+        댓글 = event.target.value
+        if(댓글 != ''){
+        btn.disabled = false
+        }else{btn.disabled = true}
+    })
+    cansle.addEventListener('click',function(){
+        comment.value = ''
+        btn.disabled = true
+    })
+    btn.addEventListener('click',function(){
+        fetch("/comment" , {
+            method : "POST",
+            headers : { "Content-Type": "application/json" },
+            body : JSON.stringify({parent_id : `<%= result._id %>`, comment : comment.value , username: `<%= user?.username %>`, user_id: `<%= user?._id %>` })
+        }).then((r)=>{
+        comment.value = ''
+        btn.disabled = true
+        if(r.status == 200) {
+            return r.json()
+        } else {
+            alert('로딩해주세요')
+            //서버가 에러코드전송시 실행할코드
+        }
+        })
+        .then((res)=>{ 
+            let 댓글창 = 
+            `<div class="comment-content row">
+                    <p class="col-2">${res.username}</p>
+                    <p class="col-7">${res.comment}</p>
+                    <p class="right col-3" style="text-align: end;">${res.date}</p>
+            </div>`
+            $('.comment-container').append(댓글창)
+        }).catch((error)=>{
+        //인터넷문제 등으로 실패시 실행할코드
+        console.log(error)
+        })
+    })
+</script>
+</body>
+</html>

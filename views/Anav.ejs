@@ -1,0 +1,109 @@
+<div class="nav-container">
+    <nav class="nav-bars">
+        <ul class="nav-list">
+            <div class="nav-btn"><i class="fa-solid fa-bars fa-flip-both"></i></div>
+            <li class="nav-item nav-reaction"><a href="/">Home</a></li>
+            <li class="nav-item nav-reaction"><a href="/list/1">List</a></li>
+            <%if(user){%>
+            <li class="nav-item nav-reaction"><a href="/write">Write</a></li>
+            <div class="flip-inner">
+                <button type="button" class="front light-mode"><i class="fa-solid fa-moon"></i></button>
+                <div class="back">
+                    <button type="button" class="dark-mode"><i class="fa-solid fa-sun"></i></button>
+                </div>
+            </div>
+            <div class="nav-dropdown-relative">
+                <p><%= user.username %><i class="fa-solid fa-user-large ml-4"></i></p>
+                <ul class="nav-dropdown">
+                    <li class="dropdown-item"><a href="/setting">설정</a></li>
+                    <li class="dropdown-item"><a href="/chat">채팅방</a></li>
+                    <li class="dropdown-item"><a href="/logout">로그아웃</a></li>
+                </ul>
+            </div>
+            <%}else{%>
+            <div class="flip-inner">
+                <button type="button" class="front light-mode"><i class="fa-solid fa-moon"></i></button>
+                <div class="back">
+                    <button type="button" class="dark-mode"><i class="fa-solid fa-sun"></i></button>
+                </div>
+            </div>
+            <li class="nav-item nav-reaction"><a href="/login">로그인</a></li>
+            <li class="nav-item nav-reaction"><a href="/register">계정 생성</a></li>
+            <%}%>
+        </ul>
+    </nav>
+</div>
+
+<div class="nav-black-bg d-none">
+    <nav class="nav-left">
+        <ul class="nav-list-left">
+            <li class="nav-btn2"><i class="fa-solid fa-bars fa-flip-both"></i></li>
+            <li class="nav-item"><a href="/">Home</a></li>
+            <li class="nav-item"><a href="/list/1">List</a></li>
+            <%if(user){%>
+            <li class="nav-item"><a href="/write">Write</a></li>
+            <%}else{%>
+            <li class="nav-item"><a href="/login">로그인</a></li>
+            <li class="nav-item"><a href="/register">계정 생성</a></li>
+            <%}%>
+        </ul>
+    </nav>
+</div>
+<div class="p-13"></div>
+<script>
+    $('.nav-btn').children('i').click(()=>{
+        $('.nav-black-bg').removeClass('d-none')
+        setTimeout(() => {
+            $('.nav-left').addClass("nav-transform") 
+        }, 0.1);
+    })
+    $('.nav-btn2').children('i').click(()=>{
+        $('.nav-left').removeClass("nav-transform")
+        setTimeout(() => {
+            $('.nav-black-bg').addClass('d-none')
+        }, 500);
+    })
+    $('.nav-black-bg').click((e)=>{
+    if(e.target == document.querySelector('.nav-black-bg')){
+        $('.nav-left').removeClass("nav-transform")
+        setTimeout(() => {
+            $('.nav-black-bg').addClass('d-none')
+        }, 500);
+    }
+    })
+    $(window).click((e)=>{
+        if(e.target == document.querySelector('.nav-dropdown-relative') || e.target ==  document.querySelector('.fa-user-large')){
+            $('.nav-dropdown').addClass('d-block')
+        }
+        else{
+            $('.nav-dropdown').removeClass('d-block')
+        }
+    })
+    let 쿠키값 = ('; '+document.cookie).split(`; mode=`).pop().split(';')[0]
+    function 쿠키확인(params) {
+        if (쿠키값 == '') {
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else if(쿠키값 == 'light'){
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else{
+            $('.flip-inner').css({'transform' : 'rotateY(180deg)'})
+            document.cookie = 'mode=dark;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'dark');
+        }
+    }
+    쿠키확인()
+    $('.light-mode').click(()=>{
+        $('.flip-inner').css({'transform' : 'rotateY(180deg)'})
+        document.cookie = 'mode=dark;path=/; max-age=' + (3600 * 24 * 400)
+        document.documentElement.setAttribute('color-theme', 'dark');
+    })
+    $('.dark-mode').click(()=>{
+        $('.flip-inner').css({'transform' : 'rotateY(0deg)'})
+        document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+        document.documentElement.setAttribute('color-theme', 'light');
+    })
+</script>

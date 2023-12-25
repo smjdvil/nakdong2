@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatting</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <%- include('Anav.ejs') %>
+    <div class="groupchat-screen">
+        <div class="groupchat-box-container">
+            <p><%= result2.participant_name %></p>
+            <% for(let i = 0; i<chat.length; i++){if(user._id.equals(chat[i].user_id)){%>
+                <div class="groupchat-box mine"><p><%= chat[i].chatting %></p></div>
+                <%}else{%>
+                    <div class="groupchat-box"><p><%= chat[i].chatting %></p></div>
+                <%}%>
+            <%}%>
+        </div>
+        <div class="groupchat-chatting">
+            <input placeholder="메세지 보내기" name="chatting" id="chatting" type="text" required>
+            <button id="btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.2/client-dist/socket.io.min.js"></script>
+<script>
+    const socket = io()
+    socket.emit('room-join', '<%= result2._id %>')
+    let 채팅 = '';
+    let 채팅창 = $('.groupchat-box-container')
+    btncheck()
+    function btncheck(){
+        const btn = document.getElementById('btn')
+        const chatting = document.getElementById('chatting')
+        btn.disabled = true
+        chatcheck()
+        btn.addEventListener('click',function(){
+            let chat_value = $('#chatting').val()
+            if('<%= result2._id %>' != ''){
+                if(chat_value ==''){
+                    alert('채팅을 입력해주세요')
+                }
+                else{
+                    socket.emit('message', {room : '<%= result2._id %>' ,msg : chatting.value, username: '<%=user.username%>',user_id:'<%=user._id%>' });
+                    $('#chatting').val('')
+                }
+            }else{
+                alert('로딩해주세요')
+            }
+        })
+    }
+    function chatcheck(){
+        $('#chatting').keyup((event)=>{
+            채팅 = event.target.value
+            if(채팅 != ''){
+                btn.disabled = false
+            }else{btn.disabled = true}
+            })
+        }
+        socket.on('broadcast',(data)=>{
+            채팅창.append(`<div class="groupchat-box mine"><p>${data}</p></div>`)
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-sm-container">
+            <form action="/register" method="POST" autocomplete="off">
+                <h2>가입</h2>
+                <div class="Tologin">
+                    <label for="username">아이디</label>
+                    <p class="warning id-use d-none">이미 존재하는 아이디입니다.</p>
+                    <p class="warning id-length d-none">2~12자 이내여야 합니다</p>
+                    <p class="warning id-jump d-none">띄어쓰기를 하지 마세요</p>
+                    <input name="username" placeholder="아이디" id="username" autocomplete="off" required>
+                </div>
+                <div class="Tologin">
+                    <label for="password">비밀번호</label>
+                    <p class="warning pw-short d-none">비밀번호가 짧습니다.</p>
+                    <p class="warning pw-num d-none">숫자를 추가하십시오.</p>
+                    <p class="warning pw-eng d-none">영어를 추가하십시오.</p>
+                    <p class="warning pw-jump d-none">띄어쓰기를 하지 마세요</p>
+                    <input name="password" type="password" placeholder="비밀번호" type="text" id="password" required>
+                </div>
+                <div class="Tologin">
+                    <label for="password2">비밀번호 확인</label>
+                    <p class="warning pw-wrong d-none">비밀번호가 다릅니다.</p>
+                    <input name="password2" type="password" placeholder="비밀번호 확인" type="text" id="password2" required>
+                </div>
+                <div class="login-submit">
+                    <div class="login-information">
+                        <div class="login-information-after">가입</div>
+                    </div>
+                    <button type="submit" id="btn">
+                        <i class="fa-solid fa-address-card"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+<script>
+    const user = '<%= user %>';
+    let username = user.split(",")
+    const btn = document.getElementById('btn')
+    btn.disabled = true
+    let 아이디중복 = true;
+    let 아이디 = '';
+    let 비번 = '';
+    let 비번체크 = '';
+    function 아이디확인(){
+    if(username != ''){
+        for(let i of username){
+        if(아이디 == i){
+            아이디중복 = false
+            $('.id-use').removeClass('d-none')
+            break;
+        }
+        else{
+            아이디중복 = true
+            $('.id-use').addClass('d-none')
+        }
+    }
+    }
+    if(아이디.length > 13 || 아이디.length < 2){
+        $('.id-length').removeClass('d-none')
+    }
+    else{
+        $('.id-length').addClass('d-none')
+    };
+    if(/\s/g.test(아이디) != true){
+        $('.id-jump').addClass('d-none')
+    }
+    else{
+        $('.id-jump').removeClass('d-none')
+    };
+    check()
+    }
+    function 비번확인(){
+    if(비번.length >= 8){
+        $('.pw-short').addClass('d-none')
+    }
+    else{
+        $('.pw-short').removeClass('d-none')
+    }
+    if(/[a-zA-Z]/.test(비번)){
+        $('.pw-eng').addClass('d-none')
+    }
+    else{
+        $('.pw-eng').removeClass('d-none')
+    }
+    if(/[0-9]/g.test(비번)){
+        $('.pw-num').addClass('d-none')
+    }
+    else{
+        $('.pw-num').removeClass('d-none')
+    }
+    if(/\s/g.test(비번) != true){
+        $('.pw-jump').addClass('d-none')
+    }
+    else{
+        $('.pw-jump').removeClass('d-none')
+    };
+    check()
+    }
+    function 비번중복확인() {
+    if(비번 == 비번체크){
+        $('.pw-wrong').addClass('d-none')
+    }
+    else{
+        $('.pw-wrong').removeClass('d-none')
+    };
+    check()
+    }
+    function check(){
+    if(
+    아이디중복 && 비번 == 비번체크 && /\s/g.test(비번) != true && /[0-9]/g.test(비번) && /[a-zA-Z]/.test(비번) && 비번.length >= 8 && 아이디.length <= 12 && 아이디.length >= 2){
+        const btn = document.getElementById('btn')
+        btn.disabled = false
+    }else{btn.disabled = true}
+    }
+    $('#username').change((event)=>{
+        아이디 = event.target.value
+        아이디확인()
+    })
+    $('#password').change((event)=>{
+        비번 = event.target.value
+        비번확인()
+        비번중복확인()
+    })
+    $('#password2').change((event)=>{
+        비번체크 = event.target.value
+        비번중복확인()
+    })
+    let 쿠키값 = ('; '+document.cookie).split(`; mode=`).pop().split(';')[0]
+    function 쿠키확인(params) {
+        if (쿠키값 == '') {
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else if(쿠키값 == 'light'){
+            document.cookie = 'mode=light;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'light');
+        }
+        else{
+            $('.flip-inner').css({'transform' : 'rotateY(180deg)'})
+            document.cookie = 'mode=dark;path=/; max-age=' + (3600 * 24 * 400)
+            document.documentElement.setAttribute('color-theme', 'dark');
+        }
+    }
+    쿠키확인()
+</script>
+</body>
+</html>

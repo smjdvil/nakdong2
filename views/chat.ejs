@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat</title>
+    <%- include('Alink.ejs') %>
+</head>
+<body>
+    <%- include('Anav.ejs') %>
+    <div class="chat-container">
+        <div role="search" class="chat-search-con">
+            <input class="chat-search" type=“search” placeholder="Search" aria-label="search" id="search" required>
+            <button class="search-send"><i class="fas fa-search"></i></button> 
+        </div>
+        <div class="chat-main">
+            <% if(result.length == 0){%>
+                <p style="text-align: center;">새로운 채팅방을 만들어 보세요</p>
+            <%}else{%>
+                <%for(let i = 0; i< result.length; i++){%>
+                    <%for(let name of result[i].participant_name){if(user.username != name){%>
+                            <div class="chat-box">
+                                <div class="chat-link"><a href="/chatting/<%= result[i]._id %>"><p><%= name %></p></a></div>
+                            </div>
+                        <%}%>
+                    <%}%>
+                <%}%>
+            <%}%>
+        </div>
+    </div>
+</body>
+</html>
